@@ -71,7 +71,8 @@ train_set = apply_features(feature_extracting_function, known_data_points)
 # rewrite training data naive bayes classifier
 # based on: prob = P(c) * P(F1 | c) * P(F2 | c) * P(F3 | c) ...
 # Class is miss or match
-# P(c = miss) = count(miss)/(total_count * count(organic AND miss))
+# P(c = miss) = p(c)                           * p(organic|miss)
+# P(c = miss) = count(miss)/total_count)       * count(organic AND miss)/count(miss)
 def train_data(train_set):
     # use a nested hash to keep track of the occurrences in each category
     occurrences = {"miss": {}, "match": {}}
@@ -98,26 +99,30 @@ def predict_data(trained_data, counter, unknown_data):
     total_count   = float(counter['miss'] + counter['match'])
     prob_miss     = counter['miss'] / total_count
     prob_match    = counter['match'] / total_count
-    total_misses  = 0
-    total_matches = 0
 
     # get the total number of misses and matches in our training data
     # for probability calculation
-    for key, value in trained_data['miss'].iteritems():
-        total_misses += value
-    for key, value in trained_data['match'].iteritems():
-        total_matches += value
+    # for key, value in trained_data['miss'].iteritems():
+    #     total_misses += value
+    # for key, value in trained_data['match'].iteritems():
+    #     total_matches += value
 
     # features is a hash of present descriptors in our piece of data
     features = feature_extracting_function(unknown_data)
 
+    # return a default value of 0.1 in order to handle zero values
     for item in features:
-        prob_miss += math.log(trained_data['miss'].get(item, 0.1) / float(total_misses))
-        prob_match += math.log(trained_data['match'].get(item, 0.1) / float(total_matches))
+
+        prob_miss += math.log(trained_data['miss'].get(item, 0.1) / float(counter['miss']))
+        prob_match += math.log(trained_data['match'].get(item, 0.1) / float(counter['match']))
     
     if prob_miss > prob_match:
+        print prob_miss
+        print prob_match
         return "Miss"
     else:
+        print prob_miss
+        print prob_match
         return "Match"
 
 print predict_data(trained, counter, unknown_1)
