@@ -78,96 +78,33 @@ unknown_4 = "organic minty sweet dark"
 
 raw_input("\n\nHit enter to continue...")
 #Train a Naive Bayes Classifier (simple but surprisingly effective).  This isn't the only classifier one could use (dtree is another, and there are many, many more), but it's a good start.
-
-# train set is a list of tuples containing hashes
-# print train_set
-
-# rewrite training data naive bayes classifier
-# based on: prob = P(c) * P(F1 | c) * P(F2 | c) * P(F3 | c) ...
-# Class is miss or match
-# P(c = miss) = count(miss)/total_count * count(organic AND miss)
-def train_data(train_set):
-    # use a nested hash to keep track of the occurrences in each category
-    occurrences = {"miss": {}, "match": {}}
-    counters    = {"miss": 0, "match": 0}
-    for item in train_set:
-        # item here is a tuple: ({'contains_word_(organic)' : True, ... "miss"})
-        # each item in train_set is a tuple, and contains "miss" or "match" as the second
-        # item in the tuple, and the feature data in the item. Lookup the key in the occurrences
-        # hash, and add the features to it.
-        counters[item[1]] += 1
-        for key in item[0]:
-            if key in occurrences[item[1]]:
-                occurrences[item[1]][key] += 1
-            else:
-                occurrences[item[1]][key] = 1
-            # print item[1], key, occurrences[item[1]][key]
-
-    return occurrences, counters
-
-trained, counter = train_data(train_set)
-# print trained['miss']
-# print trained['match']
-
-def predict_data(trained_data, counter, unknown_data):
-    # print trained_data
-    total_count = float(counter['miss'] + counter['match'])
-    prob_miss = counter['miss'] / total_count
-    prob_match = counter['match'] / total_count
-    # print prob_miss
-    # print prob_match
-    # print total_count
-    features = feature_extracting_function(unknown_data)
-    # print features
-
-    # use a generator to add up all the values in our hash
-    # print trained_data['miss']
-
-    # print trained_data['match']
-
-    # for key, value in trained_data['miss']:
-    #     total_misses += value
-    # for key, value in trained_data['match']:
-    #     total_matches += value
-    # total_misses = len(trained_data['miss'])
-    # total_matches = len(trained_data['match'])
-    # print total_misses
-    # print total_matches
-    # for each feature, calculate chance that it's a miss over the misses
-    # for item in features:
-    #     print features[item]
-        # lookup feature in trained_data
-        # get number of times it occurred
-        # get number of total items in match
-        # probability_data *= 
-predict_data(trained, counter, unknown_1)
-# print "Training Naive Bayes Classifier"
-# nb = nltk.NaiveBayesClassifier.train(train_set)
+print "Training Naive Bayes Classifier"
+nb = nltk.NaiveBayesClassifier.train(train_set)
 
 
-# raw_input("\n\nHit enter to continue...")
-# #Make guesses about our unknown projects:
-# print "Predicting the class of unknown data points"
-# print "Prediction for unknown_1: "+str(nb.classify(feature_extracting_function(unknown_1)))
-# print "Prediction for unknown_2: "+str(nb.classify(feature_extracting_function(unknown_2)))
-# print "Prediction for unknown_3: "+str(nb.classify(feature_extracting_function(unknown_3)))
-# print "Prediction for unknown_4: "+str(nb.classify(feature_extracting_function(unknown_4)))
+raw_input("\n\nHit enter to continue...")
+#Make guesses about our unknown projects:
+print "Predicting the class of unknown data points"
+print "Prediction for unknown_1: "+str(nb.classify(feature_extracting_function(unknown_1)))
+print "Prediction for unknown_2: "+str(nb.classify(feature_extracting_function(unknown_2)))
+print "Prediction for unknown_3: "+str(nb.classify(feature_extracting_function(unknown_3)))
+print "Prediction for unknown_4: "+str(nb.classify(feature_extracting_function(unknown_4)))
 
 
-# raw_input("\n\nHit enter to continue...")
-# #Now get some insight as to how well the classifier performs in general.  The right way to do this is to have a test set of examples that were not used to train the classifier, because otherwise you're just asking for a false sense of confidence (it will report that it does very well--well, of course!  Of course it's gonna do well on the things you trained it on--what you want to see is whether it can handle new data or not).  Read more about test, train, and validation sets to do it better.  Google "10 fold cross validation" to get started on really doing it right.
-# test_set = train_set #No no no no no.  Except for illustration cases like in a skillshare script, then yes. :P
-# print "Evaluating Accuracy on Training Set (WARNING! This is just for illustration purposes, don't use train set for evaluation in practice!)"
-# print "Accuracy: "+str(nltk.classify.accuracy(nb, test_set))
+raw_input("\n\nHit enter to continue...")
+#Now get some insight as to how well the classifier performs in general.  The right way to do this is to have a test set of examples that were not used to train the classifier, because otherwise you're just asking for a false sense of confidence (it will report that it does very well--well, of course!  Of course it's gonna do well on the things you trained it on--what you want to see is whether it can handle new data or not).  Read more about test, train, and validation sets to do it better.  Google "10 fold cross validation" to get started on really doing it right.
+test_set = train_set #No no no no no.  Except for illustration cases like in a skillshare script, then yes. :P
+print "Evaluating Accuracy on Training Set (WARNING! This is just for illustration purposes, don't use train set for evaluation in practice!)"
+print "Accuracy: "+str(nltk.classify.accuracy(nb, test_set))
 
 
-# raw_input("\n\nHit enter to continue...")
-# #Print the features that are most influential in making the decision of whether it's a good match or not.  Note that many of the features are presented in a format where the feature being "None" is meaningful; this is basically meant to be read as "When contains_word_(jams) is false/none, then that matters this much..."  See the nltk page referenced above for more info.
-# print "Let's look deeper into the classifier..."
-# print str(nb.show_most_informative_features(20))
+raw_input("\n\nHit enter to continue...")
+#Print the features that are most influential in making the decision of whether it's a good match or not.  Note that many of the features are presented in a format where the feature being "None" is meaningful; this is basically meant to be read as "When contains_word_(jams) is false/none, then that matters this much..."  See the nltk page referenced above for more info.
+print "Let's look deeper into the classifier..."
+print str(nb.show_most_informative_features(20))
 
 
-# raw_input("\n\nHit enter to continue...")
-# #Another interesting classifier, which can print out pseudocode for making a decision (just included in one line for fun).
-# print "Let's explore another (not NB) classifier, Decision Tree.  Because of the inherent structure of a Decision Tree classifier, we can print it out as a series of decisions made in pseudocode."
-# print nltk.DecisionTreeClassifier.train(train_set).pseudocode(depth=5)
+raw_input("\n\nHit enter to continue...")
+#Another interesting classifier, which can print out pseudocode for making a decision (just included in one line for fun).
+print "Let's explore another (not NB) classifier, Decision Tree.  Because of the inherent structure of a Decision Tree classifier, we can print it out as a series of decisions made in pseudocode."
+print nltk.DecisionTreeClassifier.train(train_set).pseudocode(depth=5)
